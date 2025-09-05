@@ -106,7 +106,7 @@ public class UsuarioDao {
 		return usuario;
 	}
 	
-	private Usuario resultSetToUsuario(ResultSet rs) throws SQLException {
+	public Usuario resultSetToUsuario(ResultSet rs) throws SQLException {
 		return new Usuario(rs.getInt("id_usuario"), rs.getString("nome_completo"), rs.getString("cpf"), rs.getString("email"), rs.getString("cargo"), rs.getString("login"), rs.getString("senha"), rs.getString("perfil"));
 	}
 	

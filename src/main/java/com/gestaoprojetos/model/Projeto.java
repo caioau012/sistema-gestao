@@ -8,19 +8,19 @@ public class Projeto {
 	private String nome;
 	private String descricao;
 	private LocalDate dataInicio;
-	private LocalDate dtaTerminoPrev;
+	private LocalDate dataTerminoPrev;
 	private String status;
 	private Usuario gerente;
 	
 	public Projeto() {
 	}
 
-	public Projeto(int id, String nome, String descricao, LocalDate dataInicio, LocalDate dtaTerminoPrev, String status, Usuario gerente) {
+	public Projeto(int id, String nome, String descricao, LocalDate dataInicio, LocalDate dataTerminoPrev, String status, Usuario gerente) {
 		this.id = id;
 		this.nome = nome;
 		this.descricao = descricao;
 		this.dataInicio = dataInicio;
-		this.dtaTerminoPrev = dtaTerminoPrev;
+		this.dataTerminoPrev = dataTerminoPrev;
 		this.status = status;
 		this.gerente = gerente;
 	}
@@ -57,12 +57,12 @@ public class Projeto {
 		this.dataInicio = dataInicio;
 	}
 
-	public LocalDate getDtaTerminoPrev() {
-		return dtaTerminoPrev;
+	public LocalDate getDataTerminoPrev() {
+		return dataTerminoPrev;
 	}
 
-	public void setDtaTerminoPrev(LocalDate dtaTerminoPrev) {
-		this.dtaTerminoPrev = dtaTerminoPrev;
+	public void setDtaTerminoPrev(LocalDate dataTerminoPrev) {
+		this.dataTerminoPrev = dataTerminoPrev;
 	}
 
 	public String getStatus() {

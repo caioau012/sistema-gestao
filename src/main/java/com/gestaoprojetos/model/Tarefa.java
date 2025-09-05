@@ -7,6 +7,7 @@ public class Tarefa {
 	private int id;
 	private String titulo;
 	private String descricao;
+	private String status;
 	private LocalDate dataInicioPrev;
 	private LocalDate dataFimPrev;
 	private LocalDate dataInicioReal;
@@ -17,10 +18,11 @@ public class Tarefa {
 	public Tarefa() {
 	}
 
-	public Tarefa(int id, String titulo, String descricao, LocalDate dataInicioPrev, LocalDate dataFimPrev,	LocalDate dataInicioReal, LocalDate dataFimReal, Projeto projeto, Usuario responsavel) {
+	public Tarefa(int id, String titulo, String descricao, String status, LocalDate dataInicioPrev, LocalDate dataFimPrev,	LocalDate dataInicioReal, LocalDate dataFimReal, Projeto projeto, Usuario responsavel) {
 		this.id = id;
 		this.titulo = titulo;
 		this.descricao = descricao;
+		this.status = status;
 		this.dataInicioPrev = dataInicioPrev;
 		this.dataFimPrev = dataFimPrev;
 		this.dataInicioReal = dataInicioReal;
@@ -51,6 +53,14 @@ public class Tarefa {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public LocalDate getDataInicioPrev() {
