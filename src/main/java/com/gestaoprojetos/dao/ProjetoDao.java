@@ -28,7 +28,7 @@ public class ProjetoDao{
             stmt.setString(1, projeto.getNome());
             stmt.setString(2, projeto.getDescricao());
             stmt.setDate(3, Date.valueOf(projeto.getDataInicio()));
-            stmt.setDate(4, Date.valueOf(projeto.getDataTerminoPrev()));
+            stmt.setDate(4, Date.valueOf(projeto.getDataTerminoPrev())); 
             stmt.setString(5, projeto.getStatus());
             stmt.setInt(6, projeto.getGerente().getId());
 

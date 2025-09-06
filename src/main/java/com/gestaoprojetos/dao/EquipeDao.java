@@ -107,12 +107,13 @@ public class EquipeDao {
 	}
 
 	public void adicionarMembro(int idEquipe, int idUsuario) throws SQLException{
-	    String sql = "INSERT INTO equipe_usuario (id_equipe, id_usuario) VALUES (?, ?)";
+	    String sql = "INSERT INTO equipe_usuario (id_equipe, id_usuario, data_entrada) VALUES (?, ?, ?)";
 
 	    try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
 
 	        stmt.setInt(1, idEquipe);
 	        stmt.setInt(2, idUsuario);
+	        stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
 	        stmt.executeUpdate();
 	    }
 	}
@@ -202,28 +203,5 @@ public class EquipeDao {
 
 	private Equipe resultSetToEquipe(ResultSet rs) throws SQLException{
 	    return new Equipe(rs.getInt("id_equipe"), rs.getString("nome"), rs.getString("descricao"));
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }
