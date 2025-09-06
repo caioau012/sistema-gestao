@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestaoprojetos.controller.UsuarioController">
+
+    <top>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 15; -fx-spacing: 20;">
+            <Button text="⬅️ Voltar" onAction="#handleVoltarDashboard" 
+                    style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+            <Label text="👥 Gerenciamento de Usuários" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.3">
+            <!-- Formulário à esquerda -->
+            <VBox style="-fx-padding: 20; -fx-spacing: 15; -fx-background-color: #ecf0f1;">
+                <Label text="➕ Novo Usuário" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                
+                <TextField fx:id="fieldNome" promptText="Nome completo" style="-fx-pref-width: 250px;"/>
+                <TextField fx:id="fieldCpf" promptText="CPF (apenas números)" style="-fx-pref-width: 250px;"/>
+                <TextField fx:id="fieldEmail" promptText="E-mail" style="-fx-pref-width: 250px;"/>
+                <TextField fx:id="fieldCargo" promptText="Cargo" style="-fx-pref-width: 250px;"/>
+                <TextField fx:id="fieldLogin" promptText="Login" style="-fx-pref-width: 250px;"/>
+                <PasswordField fx:id="fieldSenha" promptText="Senha" style="-fx-pref-width: 250px;"/>
+                
+                <ComboBox fx:id="comboPerfil" promptText="Selecione o perfil" style="-fx-pref-width: 250px;">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String value="administrador"/>
+                            <String value="gerente"/>
+                            <String value="colaborador"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                
+                <HBox spacing="10">
+                    <Button text="➕ Adicionar" onAction="#handleAdicionarUsuario" 
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                    <Button text="🔄 Limpar" onAction="#handleLimparCampos" 
+                            style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+                </HBox>
+                
+                <Label fx:id="labelMensagem" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <!-- Lista à direita -->
+            <VBox style="-fx-padding: 20;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📋 Lista de Usuários" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                    <TextField fx:id="fieldPesquisa" promptText="Pesquisar..." style="-fx-pref-width: 200px;"/>
+                    <Button text="🔍 Pesquisar" onAction="#handlePesquisarUsuario"/>
+                </HBox>
+                
+                <TableView fx:id="tabelaUsuarios" style="-fx-pref-height: 400px;">
+                    <columns>
+                        <TableColumn text="ID" prefWidth="50">
+                            <cellValueFactory><PropertyValueFactory property="id"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Nome" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="nomeCompleto"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Email" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="email"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Perfil" prefWidth="100">
+                            <cellValueFactory><PropertyValueFactory property="perfil"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Ações" prefWidth="150">
+                            <cellFactory>
+                                <TableColumn cellFactory="cell">
+                                    <HBox spacing="5">
+                                        <Button text="✏️" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                        <Button text="🗑️" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                                    </HBox>
+                                </TableColumn>
+                            </cellFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+
+                <HBox spacing="10" style="-fx-padding: 10;">
+                    <Button text="📊 Exportar Relatório" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                    <Button text="🔄 Atualizar Lista" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

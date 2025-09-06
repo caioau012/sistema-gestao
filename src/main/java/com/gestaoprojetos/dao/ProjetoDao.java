@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +91,73 @@ public class ProjetoDao{
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
+    }
+    
+    public List<Projeto> findByStatus(String status) throws SQLException{
+    	List<Projeto> projetos = new ArrayList<>();
+    	String sql = "SELECT * FROM projeto WHERE status = ?";
+    	
+    	try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+    		
+    		stmt.setString(1,  status);
+    		try(ResultSet rs = stmt.executeQuery()){
+    			while (rs.next()) {
+    				projetos.add(resultSetToProjeto(rs));
+    			}
+    		}
+    	}
+    	return projetos;
+    }
+    
+    public List<Projeto> findByGerente(int idGerente) throws SQLException {
+    	List<Projeto> projetos = new ArrayList<>();
+    	String sql = "SELECT * FROM projetos WHERE id_gerente = ?";
+    	
+    	try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+    		
+    		stmt.setInt(1,  idGerente);
+    		try(ResultSet rs = stmt.executeQuery()){
+    			while(rs.next()) {
+    				projetos.add(resultSetToProjeto(rs));
+    			}
+    		}
+    	}
+    	return projetos;
+    }
+    
+    public List<Projeto> findProjetosAtrasados() throws SQLException{
+    	List<Projeto> projetos = new ArrayList<>();
+    	String sql = "SELECT * FROM projeto WHERE data_termino_prev < ? AND status <> 'Concluído'";
+    	
+    	try(Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+    		
+    		stmt.setDate(1,  Date.valueOf(LocalDate.now()));
+    		try (ResultSet rs = stmt.executeQuery()){
+    			while (rs.next()) {
+    				projetos.add(resultSetToProjeto(rs));
+    			}
+    		}
+    	}
+    	return projetos;
+    }
+    
+    public List<Projeto> findByPeriodo(LocalDate inicio, LocalDate fim) throws SQLException {
+        List<Projeto> projetos = new ArrayList<>();
+        String sql = "SELECT * FROM projeto WHERE data_inicio >= ? AND data_termino_prev <= ?";
+
+        try (Connection conn = DatabaseConnection.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDate(1, Date.valueOf(inicio));
+            stmt.setDate(2, Date.valueOf(fim));
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    projetos.add(resultSetToProjeto(rs));
+                }
+            }
+        }
+        return projetos;
     }
 
     public Projeto resultSetToProjeto(ResultSet rs) throws SQLException {

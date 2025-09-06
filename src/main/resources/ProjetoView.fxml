@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestaoprojetos.controller.ProjetoController">
+
+    <top>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 15; -fx-spacing: 20;">
+            <Button text="⬅️ Voltar" onAction="#handleVoltarDashboard" 
+                    style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+            <Label text="📋 Gerenciamento de Projetos" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.3">
+            <!-- Formulário à esquerda -->
+            <VBox style="-fx-padding: 20; -fx-spacing: 15; -fx-background-color: #ecf0f1;">
+                <Label text="🆕 Novo Projeto" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                
+                <TextField fx:id="fieldNome" promptText="Nome do projeto" style="-fx-pref-width: 250px;"/>
+                <TextArea fx:id="fieldDescricao" promptText="Descrição" style="-fx-pref-width: 250px; -fx-pref-height: 80px;"/>
+                
+                <DatePicker fx:id="fieldDataInicio" promptText="Data de início" style="-fx-pref-width: 250px;"/>
+                <DatePicker fx:id="fieldDataTermino" promptText="Data de término prevista" style="-fx-pref-width: 250px;"/>
+                
+                <ComboBox fx:id="comboStatus" promptText="Status" style="-fx-pref-width: 250px;">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String value="planejado"/>
+                            <String value="em_andamento"/>
+                            <String value="concluído"/>
+                            <String value="cancelado"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                
+                <ComboBox fx:id="comboGerente" promptText="Gerente responsável" style="-fx-pref-width: 250px;"/>
+                
+                <HBox spacing="10">
+                    <Button text="➕ Criar Projeto" onAction="#handleCriarProjeto" 
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                    <Button text="🔄 Limpar" onAction="#handleLimparCampos" 
+                            style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+                </HBox>
+                
+                <Label fx:id="labelMensagem" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <!-- Lista à direita -->
+            <VBox style="-fx-padding: 20;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📊 Lista de Projetos" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                    <ComboBox fx:id="comboFiltroStatus" promptText="Filtrar por status" style="-fx-pref-width: 150px;">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String value="Todos"/>
+                                <String value="planejado"/>
+                                <String value="em_andamento"/>
+                                <String value="concluído"/>
+                                <String value="cancelado"/>
+                            </FXCollections>
+                        </items>
+                    </ComboBox>
+                    <Button text="🔍 Aplicar Filtro" onAction="#handleFiltrarProjetos"/>
+                </HBox>
+                
+                <TableView fx:id="tabelaProjetos" style="-fx-pref-height: 400px;">
+                    <columns>
+                        <TableColumn text="ID" prefWidth="50">
+                            <cellValueFactory><PropertyValueFactory property="id"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Nome" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="nome"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Status" prefWidth="100">
+                            <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Início" prefWidth="100">
+                            <cellValueFactory><PropertyValueFactory property="dataInicio"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Término" prefWidth="100">
+                            <cellValueFactory><PropertyValueFactory property="dataTerminoPrev"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Ações" prefWidth="150">
+                            <cellFactory>
+                                <TableColumn cellFactory="cell">
+                                    <HBox spacing="5">
+                                        <Button text="👁️" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                                        <Button text="✏️" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                        <Button text="🗑️" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                                    </HBox>
+                                </TableColumn>
+                            </cellFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+
+                <HBox spacing="10" style="-fx-padding: 10;">
+                    <Button text="📈 Ver Dashboard" style="-fx-background-color: #9b59b6; -fx-text-fill: white;"/>
+                    <Button text="🔄 Atualizar" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                    <Button text="⏰ Projetos Atrasados" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

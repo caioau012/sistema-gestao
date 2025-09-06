@@ -106,63 +106,60 @@ public class UsuarioDao {
 		return usuario;
 	}
 	
+	public Usuario findByLogin(String login) throws SQLException {
+        String sql = "SELECT * FROM usuario WHERE login = ?";
+        Usuario usuario = null;
+
+        try (Connection conn = DatabaseConnection.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, login);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    usuario = resultSetToUsuario(rs);
+                }
+            }
+        }
+        return usuario;
+    }
+	
+    public List<Usuario> findByPerfil(String perfil) throws SQLException {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT * FROM usuario WHERE perfil = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, perfil);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                while (rs.next()) {
+                    usuarios.add(resultSetToUsuario(rs));
+                }
+            }
+        }
+        return usuarios;
+    }
+    
+    public boolean loginExists(String login) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE login = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, login);
+
+            try(ResultSet rs = stmt.executeQuery()){
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+	
 	public Usuario resultSetToUsuario(ResultSet rs) throws SQLException {
 		return new Usuario(rs.getInt("id_usuario"), rs.getString("nome_completo"), rs.getString("cpf"), rs.getString("email"), rs.getString("cargo"), rs.getString("login"), rs.getString("senha"), rs.getString("perfil"));
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestaoprojetos.controller.EquipeController">
+
+    <top>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 15; -fx-spacing: 20;">
+            <Button text="⬅️ Voltar" onAction="#handleVoltarDashboard" 
+                    style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+            <Label text="👥 Gerenciamento de Equipes" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.3">
+            <!-- Formulário à esquerda -->
+            <VBox style="-fx-padding: 20; -fx-spacing: 15; -fx-background-color: #ecf0f1;">
+                <Label text="🆕 Nova Equipe" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                
+                <TextField fx:id="fieldNome" promptText="Nome da equipe" style="-fx-pref-width: 250px;"/>
+                <TextArea fx:id="fieldDescricao" promptText="Descrição" style="-fx-pref-width: 250px; -fx-pref-height: 80px;"/>
+                
+                <HBox spacing="10">
+                    <Button text="➕ Criar Equipe" onAction="#handleCriarEquipe" 
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                    <Button text="🔄 Limpar" onAction="#handleLimparCampos" 
+                            style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+                </HBox>
+                
+                <Label text="👥 Adicionar Membro" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <ComboBox fx:id="comboMembros" promptText="Selecionar usuário" style="-fx-pref-width: 250px;"/>
+                <Button text="➕ Adicionar à Equipe" onAction="#handleAdicionarMembro" 
+                        style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                
+                <Label fx:id="labelMensagem" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <!-- Lista à direita -->
+            <VBox style="-fx-padding: 20;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📋 Lista de Equipes" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                    <TextField fx:id="fieldPesquisa" promptText="Pesquisar equipe..." style="-fx-pref-width: 200px;"/>
+                    <Button text="🔍 Pesquisar" onAction="#handlePesquisarEquipe"/>
+                </HBox>
+                
+                <TableView fx:id="tabelaEquipes" style="-fx-pref-height: 300px;">
+                    <columns>
+                        <TableColumn text="ID" prefWidth="50">
+                            <cellValueFactory><PropertyValueFactory property="id"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Nome" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="nome"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Membros" prefWidth="80">
+                            <cellValueFactory><PropertyValueFactory property="membros.size"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Ações" prefWidth="150">
+                            <cellFactory>
+                                <TableColumn cellFactory="cell">
+                                    <HBox spacing="5">
+                                        <Button text="👁️" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                                        <Button text="✏️" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                        <Button text="🗑️" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                                    </HBox>
+                                </TableColumn>
+                            </cellFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+
+                <Label text="👥 Membros da Equipe Selecionada" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <ListView fx:id="listaMembros" style="-fx-pref-height: 150px;"/>
+                
+                <HBox spacing="10" style="-fx-padding: 10;">
+                    <Button text="📊 Estatísticas" style="-fx-background-color: #9b59b6; -fx-text-fill: white;"/>
+                    <Button text="🔄 Atualizar" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                    <Button text="➖ Remover Membro" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

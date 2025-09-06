@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestaoprojetos.controller.TarefaController">
+
+    <top>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 15; -fx-spacing: 20;">
+            <Button text="⬅️ Voltar" onAction="#handleVoltarDashboard" 
+                    style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+            <Label text="✅ Gerenciamento de Tarefas" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.3">
+            <!-- Formulário à esquerda -->
+            <VBox style="-fx-padding: 20; -fx-spacing: 15; -fx-background-color: #ecf0f1;">
+                <Label text="📝 Nova Tarefa" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                
+                <TextField fx:id="fieldTitulo" promptText="Título da tarefa" style="-fx-pref-width: 250px;"/>
+                <TextArea fx:id="fieldDescricao" promptText="Descrição" style="-fx-pref-width: 250px; -fx-pref-height: 80px;"/>
+                
+                <ComboBox fx:id="comboProjeto" promptText="Selecionar projeto" style="-fx-pref-width: 250px;"/>
+                <ComboBox fx:id="comboResponsavel" promptText="Responsável" style="-fx-pref-width: 250px;"/>
+                
+                <ComboBox fx:id="comboStatus" promptText="Status" style="-fx-pref-width: 250px;">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String value="pendente"/>
+                            <String value="em_execucao"/>
+                            <String value="concluida"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                
+                <DatePicker fx:id="fieldDataInicioPrev" promptText="Data início prevista" style="-fx-pref-width: 250px;"/>
+                <DatePicker fx:id="fieldDataFimPrev" promptText="Data fim prevista" style="-fx-pref-width: 250px;"/>
+                
+                <HBox spacing="10">
+                    <Button text="➕ Criar Tarefa" onAction="#handleCriarTarefa" 
+                            style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                    <Button text="🔄 Limpar" onAction="#handleLimparCampos" 
+                            style="-fx-background-color: #7f8c8d; -fx-text-fill: white;"/>
+                </HBox>
+                
+                <Label fx:id="labelMensagem" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+            </VBox>
+
+            <!-- Lista à direita -->
+            <VBox style="-fx-padding: 20;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="📋 Lista de Tarefas" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                    <ComboBox fx:id="comboFiltroProjeto" promptText="Filtrar por projeto" style="-fx-pref-width: 150px;"/>
+                    <ComboBox fx:id="comboFiltroStatus" promptText="Filtrar por status" style="-fx-pref-width: 150px;"/>
+                    <Button text="🔍 Aplicar Filtros" onAction="#handleFiltrarTarefas"/>
+                </HBox>
+                
+                <TableView fx:id="tabelaTarefas" style="-fx-pref-height: 400px;">
+                    <columns>
+                        <TableColumn text="ID" prefWidth="50">
+                            <cellValueFactory><PropertyValueFactory property="id"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Título" prefWidth="150">
+                            <cellValueFactory><PropertyValueFactory property="titulo"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Projeto" prefWidth="120">
+                            <cellValueFactory><PropertyValueFactory property="projeto.nome"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Status" prefWidth="100">
+                            <cellValueFactory><PropertyValueFactory property="status"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Responsável" prefWidth="120">
+                            <cellValueFactory><PropertyValueFactory property="responsavel.nomeCompleto"/></cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Ações" prefWidth="150">
+                            <cellFactory>
+                                <TableColumn cellFactory="cell">
+                                    <HBox spacing="5">
+                                        <Button text="▶️" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                                        <Button text="✅" style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                                        <Button text="✏️" style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                                    </HBox>
+                                </TableColumn>
+                            </cellFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+
+                <HBox spacing="10" style="-fx-padding: 10;">
+                    <Button text="⏰ Tarefas Atrasadas" style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+                    <Button text="📊 Progresso" style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                    <Button text="🔄 Atualizar" style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                </HBox>
+            </VBox>
+        </SplitPane>
+    </center>
+
+</BorderPane>

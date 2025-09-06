@@ -41,7 +41,6 @@ public class UsuarioController {
 
     public Usuario buscarUsuarioPorLogin(String login){
         try{
-            // Implementar em UsuarioDao
             return usuarioDao.findByLogin(login);
         }
         catch (SQLException e){
@@ -62,7 +61,6 @@ public class UsuarioController {
 
     public List<Usuario> listarUsuariosPorPerfil(String perfil){
         try{
-            //Precisa implementar isso também
             return usuarioDao.findByPerfil(perfil);
         }
         catch (SQLException e){
@@ -125,7 +123,6 @@ public class UsuarioController {
 
     public boolean loginExiste(String login){
         try{
-            //Implementar método
             return usuarioDao.loginExists(login);
         }
         catch (SQLException e){

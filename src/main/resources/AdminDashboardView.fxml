@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestaoprojetos.controller.DashboardController">
+
+    <!-- Topo - Menu -->
+    <top>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 15; -fx-spacing: 20;">
+            <Label text="👑 Painel Administrativo" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <HBox spacing="10">
+                <Button text="📊 Dashboard" onAction="#handleAtualizarDashboard" 
+                        style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Button text="👥 Usuários" onAction="#handleGerenciarUsuarios" 
+                        style="-fx-background-color: #2ecc71; -fx-text-fill: white;"/>
+                <Button text="📋 Projetos" onAction="#handleGerenciarProjetos" 
+                        style="-fx-background-color: #e67e22; -fx-text-fill: white;"/>
+                <Button text="✅ Tarefas" onAction="#handleGerenciarTarefas" 
+                        style="-fx-background-color: #9b59b6; -fx-text-fill: white;"/>
+                <Button text="👥 Equipes" onAction="#handleGerenciarEquipes" 
+                        style="-fx-background-color: #f1c40f; -fx-text-fill: white;"/>
+            </HBox>
+            
+            <Button text="🚪 Sair" onAction="#handleLogout" 
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+        </HBox>
+    </top>
+
+    <!-- Centro - Estatísticas -->
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20" style="-fx-padding: 20;">
+                <!-- Saudação -->
+                <HBox spacing="10">
+                    <Label fx:id="labelUsuarioLogado" text="Bem-vindo, Administrador"
+                           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label text="| Painel de Controle" style="-fx-text-fill: #7f8c8d;"/>
+                </HBox>
+
+                <!-- Cards de Estatísticas -->
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
+                    </columnConstraints>
+                    
+                    <rowConstraints>
+                        <RowConstraints prefHeight="120"/>
+                        <RowConstraints prefHeight="120"/>
+                    </rowConstraints>
+
+                    <!-- Primeira Linha -->
+                    <VBox style="-fx-background-color: #3498db; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="📋 Total de Projetos" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelTotalProjetos" text="5" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox style="-fx-background-color: #2ecc71; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="🚀 Projetos em Andamento" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelProjetosAndamento" text="3" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox style="-fx-background-color: #e74c3c; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="⏰ Projetos Atrasados" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelProjetosAtrasados" text="1" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <!-- Segunda Linha -->
+                    <VBox style="-fx-background-color: #9b59b6; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="✅ Total de Tarefas" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelTotalTarefas" text="25" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox style="-fx-background-color: #f39c12; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="📝 Tarefas Pendentes" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelTarefasPendentes" text="8" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox style="-fx-background-color: #d35400; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label text="⚠️ Tarefas Atrasadas" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelTarefasAtrasadas" text="3" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+                </GridPane>
+
+                <!-- Ações Rápidas -->
+                <VBox spacing="10" style="-fx-padding: 20; -fx-background-color: #ecf0f1; -fx-background-radius: 10;">
+                    <Label text="⚡ Ações Rápidas" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                    <HBox spacing="10">
+                        <Button text="➕ Novo Usuário" onAction="#handleGerenciarUsuarios" 
+                                style="-fx-background-color: #27ae60; -fx-text-fill: white;"/>
+                        <Button text="🆕 Novo Projeto" onAction="#handleGerenciarProjetos" 
+                                style="-fx-background-color: #2980b9; -fx-text-fill: white;"/>
+                        <Button text="📋 Nova Tarefa" onAction="#handleGerenciarTarefas" 
+                                style="-fx-background-color: #8e44ad; -fx-text-fill: white;"/>
+                        <Button text="👥 Nova Equipe" onAction="#handleGerenciarEquipes" 
+                                style="-fx-background-color: #f39c12; -fx-text-fill: white;"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Mensagem de Demo -->
+                <VBox style="-fx-background-color: #ffeaa7; -fx-padding: 15; -fx-background-radius: 10;">
+                    <Label text="🎯 Modo Demonstração" style="-fx-font-weight: bold;"/>
+                    <Label text="Esta é uma versão de demonstração. Os dados exibidos são fictícios para teste."/>
+                    <Label text="Clique nos botões acima para testar a navegação entre telas."/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

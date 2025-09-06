@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" 
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.gestaoprojetos.controller.DashboardController">
+
+    <top>
+        <HBox style="-fx-background-color: #34495e; -fx-padding: 15; -fx-spacing: 20;">
+            <Label text="👤 Painel do Colaborador" 
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <HBox spacing="10">
+                <Button text="📊 Dashboard" onAction="#handleAtualizarDashboard" 
+                        style="-fx-background-color: #3498db; -fx-text-fill: white;"/>
+                <Button text="✅ Minhas Tarefas" onAction="#handleGerenciarTarefas" 
+                        style="-fx-background-color: #9b59b6; -fx-text-fill: white;"/>
+            </HBox>
+            
+            <Button text="🚪 Sair" onAction="#handleLogout" 
+                    style="-fx-background-color: #e74c3c; -fx-text-fill: white;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true">
+            <VBox spacing="20" style="-fx-padding: 20;">
+                <HBox spacing="10">
+                    <Label fx:id="labelUsuarioLogado" text="Bem-vindo, Colaborador"
+                           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    <Label text="| Minhas Tarefas" style="-fx-text-fill: #7f8c8d;"/>
+                </HBox>
+
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
+                        <ColumnConstraints hgrow="ALWAYS" prefWidth="200"/>
+                    </columnConstraints>
+                    
+                    <rowConstraints>
+                        <RowConstraints prefHeight="120"/>
+                    </rowConstraints>
+
+                    <VBox style="-fx-background-color: #3498db; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="✅ Minhas Tarefas" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelTotalTarefas" text="8" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox style="-fx-background-color: #2ecc71; -fx-padding: 15; -fx-background-radius: 10;" 
+                          GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="📝 Tarefas Pendentes" style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="labelTarefasPendentes" text="3" 
+                               style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </VBox>
+                </GridPane>
+
+                <VBox style="-fx-background-color: #ffeaa7; -fx-padding: 15; -fx-background-radius: 10;">
+                    <Label text="🎯 Painel do Colaborador" style="-fx-font-weight: bold;"/>
+                    <Label text="Aqui você visualiza e gerencia apenas as tarefas atribuídas a você."/>
+                    <Label text="Você não tem acesso ao gerenciamento de projetos ou usuários."/>
+                </VBox>
+
+                <VBox spacing="10" style="-fx-padding: 15; -fx-background-color: #dfe6e9; -fx-background-radius: 10;">
+                    <Label text="📋 Minhas Tarefas Recentes" style="-fx-font-weight: bold;"/>
+                    <ListView>
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String>"Desenvolver módulo de login - 📅 Hoje"</String>
+                                <String>"Testar integração com banco - 📅 Amanhã"</String>
+                                <String>"Documentar API - ⏰ Atrasada"</String>
+                                <String>"Reunião com equipe - ✅ Concluída"</String>
+                            </FXCollections>
+                        </items>
+                    </ListView>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
