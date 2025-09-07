@@ -55,7 +55,6 @@ public class Equipe {
 		return membros;
 	}
 
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -71,7 +70,5 @@ public class Equipe {
 			return false;
 		Equipe other = (Equipe) obj;
 		return id == other.id;
-	}
-	
-	
+	}	
 }

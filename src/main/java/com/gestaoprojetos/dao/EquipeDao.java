@@ -106,26 +106,32 @@ public class EquipeDao {
 	    }
 	}
 
-	public void adicionarMembro(int idEquipe, int idUsuario) throws SQLException{
+	public boolean adicionarMembro(int idEquipe, int idUsuario) throws SQLException {
 	    String sql = "INSERT INTO equipe_usuario (id_equipe, id_usuario, data_entrada) VALUES (?, ?, ?)";
-
-	    try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
-
-	        stmt.setInt(1, idEquipe);
-	        stmt.setInt(2, idUsuario);
-	        stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
-	        stmt.executeUpdate();
-	    }
-	}
-
-	public void removerMembro(int idEquipe, int idUsuario) throws SQLException{
-	    String sql = "DELETE FROM equipe_usuario WHERE id_equipe = ? AND id_usuario = ?";
-
-	    try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
 	        
 	        stmt.setInt(1, idEquipe);
 	        stmt.setInt(2, idUsuario);
-	        stmt.executeUpdate();
+	        stmt.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+	        
+	        int rowsAffected = stmt.executeUpdate();
+	        return rowsAffected > 0;
+	    }
+	}
+
+	public boolean removerMembro(int idEquipe, int idUsuario) throws SQLException {
+	    String sql = "DELETE FROM equipe_usuario WHERE id_equipe = ? AND id_usuario = ?";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        
+	        stmt.setInt(1, idEquipe);
+	        stmt.setInt(2, idUsuario);
+	        
+	        int rowsAffected = stmt.executeUpdate();
+	        return rowsAffected > 0;
 	    }
 	}
 
@@ -204,4 +210,57 @@ public class EquipeDao {
 	private Equipe resultSetToEquipe(ResultSet rs) throws SQLException{
 	    return new Equipe(rs.getInt("id_equipe"), rs.getString("nome"), rs.getString("descricao"));
 	}	
+	
+	public List<Equipe> findByGerente(int idGerente) throws SQLException {
+	    List<Equipe> equipes = new ArrayList<>();
+	    String sql = "SELECT e.* FROM equipe e " +
+	                "INNER JOIN projeto p ON e.id_equipe = p.id_equipe " +
+	                "WHERE p.id_gerente = ?";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        
+	        stmt.setInt(1, idGerente);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                equipes.add(resultSetToEquipe(rs));
+	            }
+	        }
+	    }
+	    return equipes;
+	}
+	
+	public int countAll() throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM equipe";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         Statement stmt = conn.createStatement();
+	         ResultSet rs = stmt.executeQuery(sql)) {
+	        
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    return 0;
+	}
+	
+	public int countByGerente(int idGerente) throws SQLException {
+	    String sql = "SELECT COUNT(DISTINCT e.id_equipe) FROM equipe e " +
+	                "INNER JOIN projeto p ON e.id_equipe = p.id_equipe " +
+	                "WHERE p.id_gerente = ?";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        
+	        stmt.setInt(1, idGerente);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1);
+	            }
+	        }
+	    }
+	    return 0;
+	}
+	
+	
 }

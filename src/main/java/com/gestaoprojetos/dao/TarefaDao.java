@@ -24,27 +24,28 @@ public class TarefaDao {
 	}
 	
 	public void create(Tarefa tarefa) throws SQLException {
-		String sql = "INSERT INTO tarefa (titulo, descricao, status, data_inicio_prev, data_fim_prev, data_inicio_real, data_fim_real, id_projeto, id_responsavel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		try(Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
-			
-			stmt.setString(1, tarefa.getTitulo());
-			stmt.setString(2, tarefa.getDescricao());
-			stmt.setString(3,  tarefa.getStatus());
-			stmt.setDate(4,  Date.valueOf(tarefa.getDataInicioPrev()));
-			stmt.setDate(5,  Date.valueOf(tarefa.getDataFimPrev()));
-			stmt.setDate(6,  tarefa.getDataInicioReal() != null ? Date.valueOf(tarefa.getDataInicioReal()): null);
-			stmt.setDate(7,  tarefa.getDataFimReal() != null ? Date.valueOf(tarefa.getDataFimReal()) : null);
-			stmt.setInt(8, tarefa.getProjeto().getId());
-			stmt.setInt(9, tarefa.getResponsavel().getId());
-			
-			stmt.executeUpdate();
-			
-			try(ResultSet generatedKeys = stmt.getGeneratedKeys()){
-				if (generatedKeys.next()) {
-					tarefa.setId(generatedKeys.getInt(1));
-				}
-			}
-		}
+	    String sql = "INSERT INTO tarefa (titulo, descricao, status, data_inicio_prev, " +
+	                "data_fim_prev, id_projeto, id_responsavel) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+	        
+	        stmt.setString(1, tarefa.getTitulo());
+	        stmt.setString(2, tarefa.getDescricao());
+	        stmt.setString(3, tarefa.getStatus());
+	        stmt.setDate(4, Date.valueOf(tarefa.getDataInicioPrev()));
+	        stmt.setDate(5, Date.valueOf(tarefa.getDataFimPrev()));
+	        stmt.setInt(6, tarefa.getProjeto().getId());
+	        stmt.setInt(7, tarefa.getResponsavel().getId());
+	        
+	        stmt.executeUpdate();
+	        
+	        try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+	            if (generatedKeys.next()) {
+	                tarefa.setId(generatedKeys.getInt(1));
+	            }
+	        }
+	    }
 	}
 	
 	public Tarefa read(int id) throws SQLException{

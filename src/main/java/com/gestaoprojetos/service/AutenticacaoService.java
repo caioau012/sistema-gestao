@@ -2,6 +2,8 @@ package com.gestaoprojetos.service;
 
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 import com.gestaoprojetos.dao.UsuarioDao;
 import com.gestaoprojetos.model.Usuario;
@@ -37,20 +39,17 @@ public class AutenticacaoService{
         return usuarioLogado;
     }
 
-    public boolean temPermissao(String perfilRequerido){
-        if (usuarioLogado == null){
-            return false;
-        }
-
-        switch (perfilRequerido){
-            case "administrador":
-                return "administrador".equals(usuarioLogado.getPerfil());
-            case "gerente":
-                return "gerente".equals(usuarioLogado.getPerfil());
-            case "colaborador": 
-                return true;
-            default:
-                return false;
-        }
+    public boolean temPermissao(String recurso) {
+        if (usuarioLogado == null) return false;
+        
+        String perfil = usuarioLogado.getPerfil();
+        
+        Map<String, List<String>> permissoes = Map.of(
+            "administrador", List.of("usuarios", "projetos", "tarefas", "equipes", "relatorios"),
+            "gerente", List.of("projetos", "tarefas", "equipes"),
+            "colaborador", List.of("tarefas")
+        );
+        
+        return permissoes.getOrDefault(perfil, List.of()).contains(recurso);
     }
 }

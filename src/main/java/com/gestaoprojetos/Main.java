@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.gestaoprojetos.model.Equipe;
 import com.gestaoprojetos.model.Projeto;
 import com.gestaoprojetos.model.Tarefa;
 import com.gestaoprojetos.util.DatabaseConnection;
@@ -13,8 +14,10 @@ import com.gestaoprojetos.util.DatabaseConnection;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.css.converter.StringConverter;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -50,6 +53,7 @@ public class Main extends Application {
         
         try {
             testarConexaoBanco();
+            criarUsuariosTeste();
             carregarDados();
             
             primaryStage.setTitle("Sistema de Gestão de Projetos 🚀");
@@ -104,6 +108,10 @@ public class Main extends Application {
     private void mostrarTelaPrincipal() {
         TabPane abas = new TabPane();
         
+        // ✅ ADICIONAR ABA DE EQUIPES
+        Tab abaEquipes = new Tab("👥 Equipes", criarPainelEquipes());
+        abaEquipes.setClosable(false);
+        
         Tab abaProjetos = new Tab("📁 Projetos", criarPainelProjetos());
         abaProjetos.setClosable(false);
         
@@ -113,27 +121,175 @@ public class Main extends Application {
         Tab abaDashboard = new Tab("📊 Dashboard", criarPainelDashboard());
         abaDashboard.setClosable(false);
         
-        abas.getTabs().addAll(abaProjetos, abaTarefas, abaDashboard);
+        // ✅ ADICIONAR ABA DE EQUIPES na lista
+        abas.getTabs().addAll(abaDashboard, abaProjetos, abaTarefas, abaEquipes);
         
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setTop(criarCabecalho());
         layoutPrincipal.setCenter(abas);
         
         primaryStage.setScene(new Scene(layoutPrincipal));
+        primaryStage.show(); // ✅ Garantir que a janela seja mostrada
+    }
+    
+    private VBox criarPainelEquipes() {
+        TableView<Equipe> tabelaEquipes = new TableView<>();
+        
+        TableColumn<Equipe, Integer> colunaId = new TableColumn<>("ID");
+        colunaId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colunaId.setPrefWidth(50);
+        
+        TableColumn<Equipe, String> colunaNome = new TableColumn<>("Nome");
+        colunaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colunaNome.setPrefWidth(150);
+        
+        TableColumn<Equipe, String> colunaDescricao = new TableColumn<>("Descrição");
+        colunaDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colunaDescricao.setPrefWidth(200);
+        
+        tabelaEquipes.getColumns().addAll(colunaId, colunaNome, colunaDescricao);
+        
+        // ✅ Carregar equipes do banco
+        carregarEquipes(tabelaEquipes);
+        
+        Button btnNovaEquipe = new Button("➕ Nova Equipe");
+        btnNovaEquipe.setOnAction(e -> mostrarDialogoNovaEquipe(tabelaEquipes));
+        
+        Button btnGerenciarMembros = new Button("👥 Gerenciar Membros");
+        btnGerenciarMembros.setOnAction(e -> gerenciarMembrosEquipe(tabelaEquipes));
+        
+        HBox botoes = new HBox(10, btnNovaEquipe, btnGerenciarMembros);
+        botoes.setPadding(new Insets(10));
+        
+        VBox painel = new VBox(15, new Label("Gerenciamento de Equipes"), tabelaEquipes, botoes);
+        painel.setPadding(new Insets(20));
+        
+        return painel;
+    }
+    
+    private void carregarEquipes(TableView<Equipe> tabelaEquipes) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM equipe")) {
+            
+            ObservableList<Equipe> equipes = FXCollections.observableArrayList();
+            while (rs.next()) {
+                equipes.add(new Equipe(
+                    rs.getInt("id_equipe"),
+                    rs.getString("nome"),
+                    rs.getString("descricao")
+                ));
+            }
+            tabelaEquipes.setItems(equipes);
+            
+        } catch (SQLException e) {
+            System.err.println("Erro ao carregar equipes: " + e.getMessage());
+        }
+    }
+
+    private void mostrarDialogoNovaEquipe(TableView<Equipe> tabelaEquipes) {
+        Dialog<Equipe> dialog = new Dialog<>();
+        dialog.setTitle("Nova Equipe");
+        
+        ButtonType btnCriar = new ButtonType("Criar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnCriar, ButtonType.CANCEL);
+        
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
+        
+        TextField campoNome = new TextField();
+        campoNome.setPromptText("Nome da Equipe");
+        
+        TextArea campoDescricao = new TextArea();
+        campoDescricao.setPromptText("Descrição");
+        campoDescricao.setPrefRowCount(3);
+        
+        grid.add(new Label("Nome:"), 0, 0);
+        grid.add(campoNome, 1, 0);
+        grid.add(new Label("Descrição:"), 0, 1);
+        grid.add(campoDescricao, 1, 1);
+        
+        dialog.getDialogPane().setContent(grid);
+        
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnCriar) {
+                return new Equipe(0, campoNome.getText(), campoDescricao.getText());
+            }
+            return null;
+        });
+        
+        dialog.showAndWait().ifPresent(equipe -> {
+            salvarEquipe(equipe, tabelaEquipes);
+        });
+    }
+
+    private void salvarEquipe(Equipe equipe, TableView<Equipe> tabelaEquipes) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 "INSERT INTO equipe (nome, descricao) VALUES (?, ?)",
+                 Statement.RETURN_GENERATED_KEYS)) {
+            
+            stmt.setString(1, equipe.getNome());
+            stmt.setString(2, equipe.getDescricao());
+            
+            stmt.executeUpdate();
+            
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                equipe.setId(rs.getInt(1));
+                tabelaEquipes.getItems().add(equipe);
+                System.out.println("✅ Equipe criada: " + equipe.getNome());
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("❌ Erro ao salvar equipe: " + e.getMessage());
+        }
+    }
+
+    private void gerenciarMembrosEquipe(TableView<Equipe> tabelaEquipes) {
+        Equipe equipeSelecionada = tabelaEquipes.getSelectionModel().getSelectedItem();
+        if (equipeSelecionada != null) {
+            mostrarDialogoMembrosEquipe(equipeSelecionada);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Aviso");
+            alert.setHeaderText("Nenhuma equipe selecionada");
+            alert.setContentText("Por favor, selecione uma equipe para gerenciar seus membros.");
+            alert.showAndWait();
+        }
     }
     
     private HBox criarCabecalho() {
-        Label titulo = new Label("Painel de Controle - Gestão de Projetos");
-        titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        Label titulo = new Label("Sistema de Gestão de Projetos");
+        titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
         
-        Button btnSair = new Button("Sair");
+        // ✅ Label para mostrar o usuário logado
+        Label labelUsuario = new Label("Usuário: " + (usuarioLogado != null ? usuarioLogado : "Convidado"));
+        labelUsuario.setStyle("-fx-text-fill: white;");
+        
+        Button btnSair = new Button("🚪 Sair");
+        btnSair.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white;");
         btnSair.setOnAction(e -> mostrarTelaLogin());
         
-        HBox cabecalho = new HBox(20, titulo, btnSair);
-        cabecalho.setStyle("-fx-alignment: center-left; -fx-padding: 15; -fx-background-color: #2c3e50; -fx-text-fill: white;");
+        HBox cabecalho = new HBox(20, titulo, labelUsuario, btnSair);
+        cabecalho.setStyle("-fx-alignment: center; -fx-padding: 15; -fx-background-color: #2c3e50;");
         HBox.setHgrow(titulo, Priority.ALWAYS);
         
         return cabecalho;
+    }
+    
+    private void gerenciarEquipes() {
+        // Aqui você pode abrir um dialog ou nova cena para gerenciar equipes
+        System.out.println("Abrir gerenciamento de equipes...");
+        
+        // Exemplo simples:
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Gerenciamento de Equipes");
+        alert.setHeaderText("Funcionalidade em Desenvolvimento");
+        alert.setContentText("Em breve você poderá gerenciar equipes aqui!");
+        alert.showAndWait();
     }
     
     private VBox criarPainelProjetos() {
@@ -266,7 +422,7 @@ public class Main extends Application {
         });
     }
     
-    private Tarefa mostrarDialogoNovaTarefa() {
+    private void mostrarDialogoNovaTarefa() {
         Dialog<Tarefa> dialog = new Dialog<>();
         dialog.setTitle("Nova Tarefa");
         
@@ -289,9 +445,20 @@ public class Main extends Application {
         comboStatus.getItems().addAll("PENDENTE", "EM_ANDAMENTO", "CONCLUIDA");
         comboStatus.setValue("PENDENTE");
         
-        ComboBox<Integer> comboProjeto = new ComboBox<>();
-        projetos.forEach(p -> comboProjeto.getItems().add(p.getId()));
+        ComboBox<Projeto> comboProjeto = new ComboBox<>(); // ✅ Mudar para Projeto, não Integer
+        comboProjeto.setItems(FXCollections.observableArrayList(projetos));
         comboProjeto.setPromptText("Selecione o Projeto");
+        comboProjeto.setConverter(new StringConverter<Projeto>() {
+            @Override
+            public String toString(Projeto projeto) {
+                return projeto != null ? projeto.getNome() : "";
+            }
+            
+            @Override
+            public Projeto fromString(String string) {
+                return null;
+            }
+        });
         
         grid.add(new Label("Título:"), 0, 0);
         grid.add(campoTitulo, 1, 0);
@@ -306,7 +473,13 @@ public class Main extends Application {
         
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnCriar && comboProjeto.getValue() != null) {
-                return new Tarefa();
+                // ✅ AGORA cria a tarefa CORRETAMENTE com o projeto
+                Tarefa tarefa = new Tarefa();
+                tarefa.setTitulo(campoTitulo.getText());
+                tarefa.setDescricao(campoDescricao.getText());
+                tarefa.setStatus(comboStatus.getValue().toLowerCase());
+                tarefa.setProjeto(comboProjeto.getValue()); // ✅ Projeto não é mais null!
+                return tarefa;
             }
             return null;
         });
@@ -314,7 +487,6 @@ public class Main extends Application {
         dialog.showAndWait().ifPresent(tarefa -> {
             salvarTarefa(tarefa);
         });
-		return null;
     }
     
     private void salvarProjeto(Projeto projeto) {
@@ -462,7 +634,11 @@ public class Main extends Application {
     }
     
     private boolean autenticarUsuario(String usuario, String senha) {
+        // ✅ DEBUG: Verificar o que está chegando
+        System.out.println("Tentando login: " + usuario + "/" + senha);
+        
         if ("admin".equals(usuario) && "admin123".equals(senha)) {
+            System.out.println("✅ Login admin bem-sucedido");
             return true;
         }
         
@@ -474,10 +650,13 @@ public class Main extends Application {
             stmt.setString(2, senha);
             
             ResultSet rs = stmt.executeQuery();
-            return rs.next();
+            boolean autenticado = rs.next();
+            
+            System.out.println("✅ Login BD: " + autenticado);
+            return autenticado;
             
         } catch (SQLException e) {
-            System.err.println("Erro na autenticação: " + e.getMessage());
+            System.err.println("❌ Erro na autenticação: " + e.getMessage());
             return false;
         }
     }
@@ -636,5 +815,64 @@ public class Main extends Application {
     public static void main(String[] args) {
         System.out.println("🚀 Iniciando Sistema de Gestão de Projetos...");
         launch(args);
+    }
+    
+    private void criarUsuariosTeste() {
+        try {
+            // Verificar se os usuários já existem
+            if (!usuarioExiste("admin") && !usuarioExiste("gerente") && !usuarioExiste("colaborador")) {
+                
+                // Criar administrador
+                criarUsuario("Administrador Sistema", "12345678901", "admin@empresa.com", 
+                            "Administrador", "admin", "admin123", "administrador");
+                
+                // Criar gerente
+                criarUsuario("Gerente Projetos", "12345678902", "gerente@empresa.com", 
+                            "Gerente de Projetos", "gerente", "gerente123", "gerente");
+                
+                // Criar colaborador
+                criarUsuario("Colaborador Teste", "12345678903", "colaborador@empresa.com", 
+                            "Desenvolvedor", "colaborador", "colab123", "colaborador");
+                
+                System.out.println("✅ Usuários de teste criados com sucesso!");
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️  Não foi possível criar usuários de teste: " + e.getMessage());
+        }
+    }
+
+    private boolean usuarioExiste(String login) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 "SELECT COUNT(*) FROM usuario WHERE login = ?")) {
+            
+            stmt.setString(1, login);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private void criarUsuario(String nome, String cpf, String email, String cargo, 
+                             String login, String senha, String perfil) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                 "INSERT INTO usuario (nome_completo, cpf, email, cargo, login, senha, perfil) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+            
+            stmt.setString(1, nome);
+            stmt.setString(2, cpf);
+            stmt.setString(3, email);
+            stmt.setString(4, cargo);
+            stmt.setString(5, login);
+            stmt.setString(6, senha);
+            stmt.setString(7, perfil);
+            
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erro ao criar usuário " + login + ": " + e.getMessage());
+        }
     }
 }

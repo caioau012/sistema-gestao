@@ -162,4 +162,37 @@ public class UsuarioDao {
 	public Usuario resultSetToUsuario(ResultSet rs) throws SQLException {
 		return new Usuario(rs.getInt("id_usuario"), rs.getString("nome_completo"), rs.getString("cpf"), rs.getString("email"), rs.getString("cargo"), rs.getString("login"), rs.getString("senha"), rs.getString("perfil"));
 	}	
+	
+	public boolean emailExists(String email) throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        
+	        stmt.setString(1, email);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    }
+	    return false;
+	}
+	
+	public boolean cpfExists(String cpf) throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM usuario WHERE cpf = ?";
+	    
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement stmt = conn.prepareStatement(sql)) {
+	        
+	        stmt.setString(1, cpf);
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    }
+	    return false;
+	}
+
 }

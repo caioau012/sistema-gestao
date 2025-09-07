@@ -110,6 +110,18 @@ public class Tarefa {
 	public void setResponsavel(Usuario responsavel) {
 		this.responsavel = responsavel;
 	}
+	
+	public boolean estaAtrasada() {
+	    if ("concluida".equals(this.status)) {
+	        return false;
+	    }
+	    
+	    if (this.dataFimPrev != null) {
+	        return this.dataFimPrev.isBefore(LocalDate.now());
+	    }
+	    
+	    return false;
+	}
 
 	@Override
 	public int hashCode() {
